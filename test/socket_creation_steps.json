@@ -1,0 +1,10 @@
+{
+    "create_socket_1": ["B029", "b0280401", "b02a2c01"],
+    "create_socket_2": ["4831FF", "4D31C04C89C7"],
+    "create_socket_3": ["4883C702", "40B702", "40B7034080EF01"],
+    "create_socket_4": ["4831F6", "4D31C04C89C6"],
+    "create_socket_5": ["4883C601", "40B601", "40B6024080EE01"],
+    "create_socket_6": ["4831D2", "4D31C04C89C2"],
+    "create_socket_syscall": ["0F05"],
+    "create_socket_mov": ["4989C1"]
+}
