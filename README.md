@@ -11,19 +11,6 @@ This project generates shellcode based on a provided IP and port, compiles a C p
 ## Directory Hierarchy
 ```
 |—— .gitignore
-|—— .trunk
-|    |—— .gitignore
-|    |—— configs
-|        |—— .isort.cfg
-|        |—— .markdownlint.yaml
-|        |—— ruff.toml
-|    |—— plugins
-|    |—— tmp
-|        |—— trunk
-|            |—— aqkauy3
-|    |—— trunk.yaml
-|—— ASM
-|    |—— Revershell.asm
 |—— connection_steps.json
 |—— gen.py
 |—— LICENSE
