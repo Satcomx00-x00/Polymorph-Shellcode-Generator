@@ -14,14 +14,6 @@ This project generates shellcode based on a provided IP and port, compiles a C p
 |—— connection_steps.json
 |—— gen.py
 |—— LICENSE
-|—— old_research
-|    |—— Full-working.py
-|    |—— out.bin
-|    |—— reverse.asm
-|    |—— reverse.py
-|    |—— script.c
-|    |—— shellcode
-|    |—— test.py
 |—— requirements.txt
 |—— shellcode_loaded_template.c
 |—— socket_creation_steps.json
