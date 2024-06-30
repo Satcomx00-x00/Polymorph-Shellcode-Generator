@@ -27,9 +27,7 @@ def port_to_hex(port):
     return port_hex
 
 def format_shellcode(s):
-    formatted_shellcode = 'X'
-    formatted_shellcode += 'X'.join(a + b for a, b in zip(s[::2], s[1::2]))
-    formatted_shellcode = formatted_shellcode.replace('X', '\\x')
+    formatted_shellcode = '\\x'.join(s[i:i+2] for i in range(0, len(s), 2))
     return formatted_shellcode
 
 ipv4_hex = ip_to_hex(ipv4)
