@@ -17,15 +17,13 @@ else:
 
 def ip_to_hex(ip):
     if not all(1 <= int(byte) <= 255 for byte in ip.split('.')):
-        print(Fore.RED + "Invalid IP. Use values (1-255).")
+        print(Fore.RED + "Invalid IP.")
         exit(1)
     hex_parts = (format(int(byte), 'X').zfill(2) for byte in ip.split('.'))
     return ''.join(hex_parts)
 
 def port_to_hex(port):
-    port_hex = hex(int(port))[2:]
-    if len(port_hex) % 2 != 0:
-        port_hex = '0' + port_hex
+    port_hex = format(int(port), '04X')
     return port_hex
 
 def format_shellcode(s):
