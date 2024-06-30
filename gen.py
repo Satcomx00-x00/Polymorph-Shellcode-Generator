@@ -8,7 +8,7 @@ init(autoreset=True)
 
 def validate_args():
     if len(sys.argv) != 3:
-        print(Fore.RED + "Invalid parameters. Use: python generator.py <IP> <PORT>")
+        print(Fore.RED + "Invalid parameters. Use: python gen.py <IP> <PORT>")
         exit(1)
     return sys.argv[1], sys.argv[2]
 
