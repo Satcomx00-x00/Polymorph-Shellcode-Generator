@@ -8,6 +8,38 @@ This project generates shellcode based on a provided IP and port, compiles a C p
 - GCC (GNU Compiler Collection)
 - Colorama (Python package)
 
+## Directory Hierarchy
+```
+|—— .gitignore
+|—— .trunk
+|    |—— .gitignore
+|    |—— configs
+|        |—— .isort.cfg
+|        |—— .markdownlint.yaml
+|        |—— ruff.toml
+|    |—— plugins
+|    |—— tmp
+|        |—— trunk
+|            |—— aqkauy3
+|    |—— trunk.yaml
+|—— ASM
+|    |—— Revershell.asm
+|—— connection_steps.json
+|—— gen.py
+|—— LICENSE
+|—— old_research
+|    |—— Full-working.py
+|    |—— out.bin
+|    |—— reverse.asm
+|    |—— reverse.py
+|    |—— script.c
+|    |—— shellcode
+|    |—— test.py
+|—— requirements.txt
+|—— shellcode_loaded_template.c
+|—— socket_creation_steps.json
+```
+
 ## Installation
 
 1. **Install GCC**:
